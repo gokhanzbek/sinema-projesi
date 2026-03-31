@@ -1,0 +1,77 @@
+<section class="detail-page" *ngIf="vm$ | async as vm">
+  <div
+    class="hero-bg"
+    [style.background-image]="
+      vm.movie?.imageUrl
+        ? 'linear-gradient(rgba(7,10,18,.4), rgba(7,10,18,.7)), url(' + vm.movie?.imageUrl + ')'
+        : 'linear-gradient(135deg, #111827, #2a1240)'
+    "
+  ></div>
+
+  <div class="overlay"></div>
+
+  <div class="container">
+    <a routerLink="/" class="back-link">← Vizyondaki Filmler</a>
+
+    <div class="status" *ngIf="vm.isLoading">Film detayları yükleniyor…</div>
+    <div class="status status--error" *ngIf="!vm.isLoading && vm.errorMessage">
+      {{ vm.errorMessage }}
+    </div>
+
+    <article class="detail" *ngIf="!vm.isLoading && vm.movie as movie">
+      <div class="poster-wrap">
+        <img
+          class="poster"
+          [src]="movie.imageUrl || ''"
+          [alt]="movie.title"
+          loading="lazy"
+          (error)="onPosterError($event)"
+        />
+      </div>
+
+      <div class="content">
+        <h1 class="title">{{ movie.title || 'Film Adı Yakında' }}</h1>
+
+        <div class="meta">
+          <span class="badge">{{ formatReleaseDate(movie.releaseDate) }}</span>
+          <span class="badge">{{ formatGenre(movie.genre) }}</span>
+          <span class="badge">{{ formatDuration(movie.duration) }}</span>
+          <span class="badge">Yön: {{ formatDirector(movie.director) }}</span>
+        </div>
+
+        <p class="description">{{ formatDescription(movie.description) }}</p>
+
+        <button type="button" class="cta">Seanslar / Bilet Al</button>
+      </div>
+    </article>
+
+    <section class="showtimes" *ngIf="!vm.isLoading && vm.movie">
+      <div class="showtimes__header">
+        <h2 class="showtimes__title">Tarih, Salon ve Seanslar</h2>
+      </div>
+
+      <div class="showtimes__empty" *ngIf="!vm.showtimes.length">
+        Bu film için uygun seans bulunamadı.
+      </div>
+
+      <div class="date-list" *ngIf="vm.showtimes.length">
+        <article class="date-card" *ngFor="let date of vm.showtimes">
+          <h3 class="date-card__title">{{ date.dateTitle }}</h3>
+
+          <div class="hall-list">
+            <div class="hall-row" *ngFor="let hall of date.halls">
+              <div class="hall-row__name">{{ hall.hallName }}</div>
+              <div class="hall-row__times">
+                <button class="time-chip" type="button" *ngFor="let slot of hall.times">
+                  <span>{{ slot.time }}</span>
+                  <small>{{ formatPrice(slot.price) }}</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>
+

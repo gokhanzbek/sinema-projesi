@@ -1,0 +1,59 @@
+<div class="home">
+  <header class="hero">
+    <div class="hero__inner">
+      <div class="hero__left">
+        <div class="hero__kicker">Vizyonda</div>
+        <h1 class="hero__title">Bugün hangi filme gidelim?</h1>
+        <p class="hero__subtitle">
+          En güncel filmleri keşfet, posterlerine göz at ve seçimini yap.
+        </p>
+      </div>
+      <div class="hero__right">
+        <div class="hero__badge">
+          <div class="hero__badgeTop">Sinema</div>
+          <div class="hero__badgeBottom">Bilet</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content" aria-live="polite" *ngIf="vm$ | async as vm">
+    <div class="status" *ngIf="vm.isLoading">Filmler yükleniyor…</div>
+    <div class="status status--error" *ngIf="!vm.isLoading && vm.errorMessage">
+      {{ vm.errorMessage }}
+    </div>
+
+    <section class="section" *ngIf="!vm.isLoading && !vm.errorMessage">
+      <div class="section__header">
+        <h2 class="section__title">Vizyondaki Filmler</h2>
+        <div class="section__count">{{ vm.movies.length }} film</div>
+      </div>
+
+      <div class="grid" *ngIf="vm.movies.length; else emptyState">
+        <article
+          class="card"
+          *ngFor="let movie of vm.movies; trackBy: trackById"
+          [routerLink]="['/movie', movie.id]"
+        >
+          <div class="card__poster">
+            <img
+              class="card__img"
+              [src]="movie.imageUrl || ''"
+              [alt]="movie.title"
+              loading="lazy"
+              (error)="onPosterError($event)"
+            />
+          </div>
+          <div class="card__meta">
+            <div class="card__title" [title]="movie.title">{{ movie.title }}</div>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="status">Gösterilecek film bulunamadı.</div>
+      </ng-template>
+    </section>
+  </main>
+</div>
+
