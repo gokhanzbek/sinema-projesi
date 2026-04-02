@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MovieTicketAPI.Application.Abstractions.Token;
 using MovieTicketAPI.Domain.Entities.Identity;

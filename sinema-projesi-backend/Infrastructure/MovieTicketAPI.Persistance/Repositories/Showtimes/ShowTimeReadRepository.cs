@@ -1,11 +1,7 @@
-﻿using MovieTicketAPI.Application.Repositories.Showtimes;
+using Microsoft.EntityFrameworkCore;
+using MovieTicketAPI.Application.Repositories.Showtimes;
 using MovieTicketAPI.Domain.Entities;
 using MovieTicketAPI.Persistence.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieTicketAPI.Persistence.Repositories.Showtimes
 {
@@ -14,5 +10,10 @@ namespace MovieTicketAPI.Persistence.Repositories.Showtimes
         public ShowTimeReadRepository(MovieTicketDbContext context) : base(context)
         {
         }
+
+        public Task<Showtime?> GetByIdWithHallAsync(int id, CancellationToken cancellationToken = default) =>
+            Table.AsNoTracking()
+                .Include(s => s.Hall)
+                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 }

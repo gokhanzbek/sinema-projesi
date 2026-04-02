@@ -1,13 +1,7 @@
-﻿using MediatR;
-using MovieTicketAPI.Application.Abstractions.Services;
-using MovieTicketAPI.Application.Features.Command.Halls.RemoveHall;
+using MediatR;
+using MovieTicketAPI.Application.Helpers;
 using MovieTicketAPI.Application.Repositories.Halls;
 using MovieTicketAPI.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieTicketAPI.Application.Features.Command.Halls.UpdateHall
 {
@@ -22,29 +16,31 @@ namespace MovieTicketAPI.Application.Features.Command.Halls.UpdateHall
             _hallWriteRepository = hallWriteRepository;
         }
 
-       
-
-        async Task<UpdateHallCommandResponse> IRequestHandler<UpdateHallCommandRequest, UpdateHallCommandResponse>.Handle(UpdateHallCommandRequest request, CancellationToken cancellationToken)
+        public async Task<UpdateHallCommandResponse> Handle(UpdateHallCommandRequest request, CancellationToken cancellationToken)
         {
-            
-            
-
-            Hall newhall = await _hallReadRepository.GetByIdAsync(request.Id.ToString(), tracking: true);
-            if (newhall == null)
+            var dimErr = HallGridHelper.ValidateDimensions(request.RowCount, request.ColumnCount);
+            if (dimErr != null)
             {
-                new UpdateHallCommandResponse() { IsSuccess = false, Message = "Salon bulunamadı" };
-
+                return new UpdateHallCommandResponse { IsSuccess = false, Message = dimErr };
             }
-            newhall.Capacity = request.Capacity;
-            newhall.Name = request.Name;
 
-            _hallWriteRepository.Update(newhall);
-            _hallWriteRepository.SaveAsync();
-            return new UpdateHallCommandResponse()
+            var hall = await _hallReadRepository.GetByIdAsync(request.Id.ToString(), tracking: true);
+            if (hall == null)
             {
-                Message = "Salon başarıyla Güncellendi.",
-                IsSuccess = true
+                return new UpdateHallCommandResponse { IsSuccess = false, Message = "Salon bulunamadı." };
+            }
 
+            hall.Name = request.Name;
+            hall.RowCount = request.RowCount;
+            hall.ColumnCount = request.ColumnCount;
+            hall.Capacity = request.RowCount * request.ColumnCount;
+
+            _hallWriteRepository.Update(hall);
+            await _hallWriteRepository.SaveAsync();
+            return new UpdateHallCommandResponse
+            {
+                Message = "Salon başarıyla güncellendi.",
+                IsSuccess = true
             };
         }
     }

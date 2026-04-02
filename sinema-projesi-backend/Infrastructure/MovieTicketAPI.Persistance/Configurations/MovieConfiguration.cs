@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MovieTicketAPI.Domain.Entities;
 using System;
@@ -15,11 +15,12 @@ namespace MovieTicketAPI.Persistence.Configurations
         {
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Title).IsRequired().HasMaxLength(150);
-            builder.Property(m => m.Genre).HasMaxLength(50);
             builder.Property(m => m.Director).HasMaxLength(100);
             builder.Property(m => m.Description).HasMaxLength(500);
             builder.Property(m => m.DurationInMinutes).IsRequired();
             builder.Property(m => m.ImageUrl).IsRequired(false).HasMaxLength(500);
+            builder.Property(m => m.ImdbId).IsRequired(false).HasMaxLength(20);
+            builder.Property(m => m.ImdbRating).HasPrecision(5, 2);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,6 @@ namespace MovieTicketAPI.Application.Features.Command.Movie.CreateMovie
         public int Id { get; set; }
         public String Message { get; set; } = null!;
         public bool IsSuccess { get; set; }
-        
+        public decimal? ImdbRating { get; set; }
     }
 }

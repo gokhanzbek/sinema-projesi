@@ -1,9 +1,9 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MovieTicketAPI.Application.Repositories.Movies.MovieTicketAPI.Domain.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MovieTicketAPI.Application.Features.Queries.Movies.GetByIdMovie
@@ -11,12 +11,21 @@ namespace MovieTicketAPI.Application.Features.Queries.Movies.GetByIdMovie
     public class GetByIdMovieQueryHandler : IRequestHandler<GetByIdMovieQueryRequest, GetByIdMovieQueryResponse>
     {
         private readonly IMovieReadRepository _movieReadRepository;
+
         public GetByIdMovieQueryHandler(IMovieReadRepository movieReadRepository) => _movieReadRepository = movieReadRepository;
 
         public async Task<GetByIdMovieQueryResponse> Handle(GetByIdMovieQueryRequest request, CancellationToken cancellationToken)
         {
-            var movie = await _movieReadRepository.GetByIdAsync(request.Id.ToString(), tracking: false);
-            if (movie == null) return new GetByIdMovieQueryResponse();
+            var movie = await _movieReadRepository.GetAll(false)
+                .Where(m => m.Id == request.Id)
+                .Include(m => m.MovieCategories)
+                .ThenInclude(mc => mc.Category)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (movie == null)
+            {
+                return new GetByIdMovieQueryResponse();
+            }
 
             return new GetByIdMovieQueryResponse
             {
@@ -25,9 +34,12 @@ namespace MovieTicketAPI.Application.Features.Queries.Movies.GetByIdMovie
                 ImageUrl = movie.ImageUrl,
                 Description = movie.Description,
                 DurationInMinutes = movie.DurationInMinutes,
-                Genre = movie.Genre,
+                Categories = movie.MovieCategories.Select(mc => mc.Category.Name).ToList(),
+                CategoryIds = movie.MovieCategories.Select(mc => mc.CategoryId).ToList(),
                 Director = movie.Director,
-                ReleaseYear = movie.ReleaseYear
+                ReleaseYear = movie.ReleaseYear,
+                ImdbId = movie.ImdbId,
+                ImdbRating = movie.ImdbRating
             };
         }
     }

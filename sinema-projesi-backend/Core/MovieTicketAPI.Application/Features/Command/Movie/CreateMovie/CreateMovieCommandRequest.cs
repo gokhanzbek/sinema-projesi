@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,11 @@ namespace MovieTicketAPI.Application.Features.Command.Movie.CreateMovie
     {
         public string Title { get; set; }           
         public int DurationInMinutes { get; set; } 
-        public string Genre { get; set; }           
+        public List<int> CategoryIds { get; set; } = new();
         public string Director { get; set; }       
         public int ReleaseYear { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
+        public string? ImdbId { get; set; }
     }
 }

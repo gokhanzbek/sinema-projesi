@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MovieTicketAPI.Domain.Entities;
@@ -23,6 +23,8 @@ namespace MovieTicketAPI.Persistence.Contexts
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Hall> Halls { get; set; }
         public DbSet<Showtime> Showtimes { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<MovieCategory> MovieCategories { get; set; }
         // IdentityDbSet'ler (Users, Roles vb.) arka planda otomatik olarak geliyor.
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

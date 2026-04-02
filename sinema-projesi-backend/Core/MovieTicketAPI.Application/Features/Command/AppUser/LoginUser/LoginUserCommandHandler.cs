@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace MovieTicketAPI.Application.Features.Command.AppUser.LoginUser
                 IList<string> userRoles = await _userManager.GetRolesAsync(user);
 
                 // 2. Çektiğimiz rolleri TokenHandler'a gönderiyoruz ki içine kazısın!
-                Token token = _tokenHandler.CreateAccessToken(5, user, userRoles); 
+                Token token = _tokenHandler.CreateAccessToken(900, user, userRoles); 
                 
                 return new LoginUserSuccessCommandResponse()
                 {

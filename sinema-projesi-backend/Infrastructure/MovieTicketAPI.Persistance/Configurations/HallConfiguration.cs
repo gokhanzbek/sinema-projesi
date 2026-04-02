@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MovieTicketAPI.Domain.Entities;
 using System;
@@ -16,6 +16,8 @@ namespace MovieTicketAPI.Persistence.Configurations
             builder.HasKey(h => h.Id);
             builder.Property(h => h.Name).IsRequired().HasMaxLength(50);
             builder.Property(h => h.Capacity).IsRequired();
+            builder.Property(h => h.RowCount).IsRequired();
+            builder.Property(h => h.ColumnCount).IsRequired();
         }
     }
 }

@@ -4,14 +4,34 @@ export interface Movie {
   id: MovieId;
   title: string;
   imageUrl: string | null;
+  /** API’den gelir; IMDb alanı backend’de hazır. */
+  imdbRating?: number | null;
+}
+
+/** Ana sayfa /api/Movies/filter isteği */
+export interface HomeMovieFilters {
+  eventDate: string;
+  sort: string;
+  minPrice: number | null;
+  maxPrice: number | null;
+  genres: string[];
+  timeSlots: string[];
 }
 
 export interface MovieDetail extends Movie {
   description: string | null;
   duration: string | null;
   director: string | null;
+  /** Birleştirilmiş kategori metni (görünüm için). */
   genre: string | null;
+  categories: string[] | null;
+  categoryIds?: number[];
   releaseDate: string | null;
+  /** API süre (dakika) — admin formu için */
+  durationMinutes?: number;
+  releaseYear?: number;
+  /** IMDb tt… kimliği — admin düzenleme */
+  imdbId?: string | null;
 }
 
 export interface ShowtimeSlot {
@@ -36,9 +56,11 @@ export interface GetAllMoviesResponse {
     id?: string;
     title?: string;
     imageUrl?: string | null;
+    categories?: string[] | null;
     Id?: string;
     Title?: string;
     ImageUrl?: string | null;
+    Categories?: string[] | null;
   }>;
 }
 
@@ -50,6 +72,8 @@ export interface GetMovieByIdResponse {
   duration?: string | null;
   director?: string | null;
   genre?: string | null;
+  categories?: string[] | null;
+  categoryIds?: number[];
   releaseDate?: string | null;
   durationInMinutes?: number;
   releaseYear?: number;
@@ -60,9 +84,15 @@ export interface GetMovieByIdResponse {
   Duration?: string | null;
   Director?: string | null;
   Genre?: string | null;
+  Categories?: string[] | null;
+  CategoryIds?: number[];
   ReleaseDate?: string | null;
   DurationInMinutes?: number;
   ReleaseYear?: number;
+  imdbRating?: number | null;
+  ImdbRating?: number | null;
+  imdbId?: string | null;
+  ImdbId?: string | null;
 }
 
 export interface GetShowtimesByMovieResponse {

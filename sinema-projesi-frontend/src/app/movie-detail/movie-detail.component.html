@@ -31,6 +31,7 @@
 
       <div class="content">
         <h1 class="title">{{ movie.title || 'Film Adı Yakında' }}</h1>
+        <app-imdb-rating *ngIf="movie.imdbRating != null" [value]="movie.imdbRating" [large]="true" />
 
         <div class="meta">
           <span class="badge">{{ formatReleaseDate(movie.releaseDate) }}</span>
@@ -45,7 +46,7 @@
       </div>
     </article>
 
-    <section class="showtimes" *ngIf="!vm.isLoading && vm.movie">
+    <section class="showtimes" *ngIf="!vm.isLoading && vm.movie as movie">
       <div class="showtimes__header">
         <h2 class="showtimes__title">Tarih, Salon ve Seanslar</h2>
       </div>
@@ -54,24 +55,92 @@
         Bu film için uygun seans bulunamadı.
       </div>
 
-      <div class="date-list" *ngIf="vm.showtimes.length">
-        <article class="date-card" *ngFor="let date of vm.showtimes">
-          <h3 class="date-card__title">{{ date.dateTitle }}</h3>
+      <div class="date-strip" *ngIf="vm.showtimes.length">
+        <button
+          type="button"
+          class="date-strip__nav"
+          (click)="scrollDateStrip(-1)"
+          aria-label="Önceki günler"
+        >
+          ‹
+        </button>
+        <div class="date-strip__viewport" #dateStripViewport>
+          <div class="date-strip__track">
+            <button
+              type="button"
+              class="date-tab"
+              *ngFor="let date of vm.showtimes"
+              [class.active]="selectedDateTitle === date.dateTitle"
+              (click)="selectDate(date.dateTitle)"
+            >
+              <span class="date-tab__primary">{{ formatTabPrimary(date.dateTitle) }}</span>
+              <span class="date-tab__secondary">{{ formatTabRelative(date.dateTitle) }}</span>
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="date-strip__nav"
+          (click)="scrollDateStrip(1)"
+          aria-label="Sonraki günler"
+        >
+          ›
+        </button>
+      </div>
 
-          <div class="hall-list">
-            <div class="hall-row" *ngFor="let hall of date.halls">
-              <div class="hall-row__name">{{ hall.hallName }}</div>
-              <div class="hall-row__times">
-                <button class="time-chip" type="button" *ngFor="let slot of hall.times">
+      <div class="hall-cards" *ngIf="vm.showtimes.length && selectedDateTitle">
+        <ng-container *ngFor="let date of vm.showtimes">
+          <ng-container *ngIf="selectedDateTitle === date.dateTitle">
+            <article class="hall-card" *ngFor="let hall of date.halls">
+              <div class="hall-card__top">
+                <div class="hall-card__info">
+                  <div class="hall-card__name">{{ hall.hallName }}</div>
+                  <div class="hall-card__meta">{{ formatHallSubtitle(movie) }}</div>
+                </div>
+                <div class="hall-card__date-badge">
+                  <svg
+                    class="hall-card__calendar-icon"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-miterlimit="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M15.695 13.7h.009M15.695 16.7h.009M11.995 13.7h.01M11.995 16.7h.01M8.294 13.7h.01M8.294 16.7h.01"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span>{{ formatCardDateLine(date.dateTitle) }}</span>
+                </div>
+              </div>
+              <div class="hall-card__times">
+                <button
+                  class="time-chip"
+                  type="button"
+                  *ngFor="let slot of hall.times"
+                  (click)="onSessionClick(slot.showtimeId)"
+                >
                   <span>{{ slot.time }}</span>
                   <small>{{ formatPrice(slot.price) }}</small>
                 </button>
               </div>
-            </div>
-          </div>
-        </article>
+            </article>
+          </ng-container>
+        </ng-container>
       </div>
     </section>
   </div>
 </section>
-

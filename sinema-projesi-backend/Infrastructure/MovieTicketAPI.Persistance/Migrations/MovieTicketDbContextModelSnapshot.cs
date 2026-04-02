@@ -125,6 +125,33 @@ namespace MovieTicketAPI.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Hall", b =>
                 {
                     b.Property<int>("Id")
@@ -136,6 +163,9 @@ namespace MovieTicketAPI.Persistence.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<int>("ColumnCount")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -143,6 +173,9 @@ namespace MovieTicketAPI.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("RowCount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -285,14 +318,17 @@ namespace MovieTicketAPI.Persistence.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImdbId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal?>("ImdbRating")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<int>("ReleaseYear")
                         .HasColumnType("int");
@@ -308,6 +344,21 @@ namespace MovieTicketAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("MovieTicketAPI.Domain.Entities.MovieCategory", b =>
+                {
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MovieId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("MovieCategories", (string)null);
                 });
 
             modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Showtime", b =>
@@ -436,6 +487,25 @@ namespace MovieTicketAPI.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MovieTicketAPI.Domain.Entities.MovieCategory", b =>
+                {
+                    b.HasOne("MovieTicketAPI.Domain.Entities.Category", "Category")
+                        .WithMany("MovieCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieTicketAPI.Domain.Entities.Movie", "Movie")
+                        .WithMany("MovieCategories")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Movie");
+                });
+
             modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Showtime", b =>
                 {
                     b.HasOne("MovieTicketAPI.Domain.Entities.Hall", "Hall")
@@ -474,6 +544,11 @@ namespace MovieTicketAPI.Persistence.Migrations
                     b.Navigation("Showtime");
                 });
 
+            modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("MovieCategories");
+                });
+
             modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Hall", b =>
                 {
                     b.Navigation("Showtimes");
@@ -486,6 +561,8 @@ namespace MovieTicketAPI.Persistence.Migrations
 
             modelBuilder.Entity("MovieTicketAPI.Domain.Entities.Movie", b =>
                 {
+                    b.Navigation("MovieCategories");
+
                     b.Navigation("Showtimes");
                 });
 #pragma warning restore 612, 618

@@ -1,8 +1,10 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieTicketAPI.Application.Features.Command.AppUser.ChangePassword;
 using MovieTicketAPI.Application.Features.Command.AppUser.CreateUser;
 using MovieTicketAPI.Application.Features.Command.AppUser.LoginUser;
+using MovieTicketAPI.Application.Features.Queries.AppUser.GetCurrentUserProfile;
 
 namespace MovieTicketAPI.API.Controllers
 {
@@ -28,7 +30,25 @@ namespace MovieTicketAPI.API.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUserProfile()
+        {
+            var response = await _mediator.Send(new GetCurrentUserProfileQueryRequest());
+            if (!response.Succeeded)
+                return Unauthorized(response);
+            return Ok(response);
+        }
 
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommandRequest request)
+        {
+            var response = await _mediator.Send(request);
+            if (!response.Succeeded)
+                return BadRequest(response);
+            return Ok(response);
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,14 +54,23 @@ namespace MovieTicketAPI.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
-        // [Authorize] -> Controller tepesinde varsa buraya yazmana gerek yok!
-        public async Task<IActionResult> CancelTicket([FromRoute] int id)
+        /// <summary>Kullanıcı kendi aktif biletini iptal eder (durum = İptal, koltuk boşalır).</summary>
+        [HttpPut("cancel/{id:int}")]
+        public Task<IActionResult> CancelTicketPut([FromRoute] int id) => CancelTicketAsync(id);
+
+        /// <summary>İptal (POST) — Angular ve bazı ortamlar için; PUT ile aynı işlem.</summary>
+        [HttpPost("cancel/{id:int}")]
+        public Task<IActionResult> CancelTicketPost([FromRoute] int id) => CancelTicketAsync(id);
+
+        private async Task<IActionResult> CancelTicketAsync(int id)
         {
             var request = new RemoveTicketCommandRequest { TicketId = id };
             var response = await _mediator.Send(request);
 
-            return Ok(response);
+            if (response.Succeeded)
+                return Ok(response);
+
+            return BadRequest(response);
         }
     }
 }

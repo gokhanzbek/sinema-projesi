@@ -1,59 +1,168 @@
-<div class="home">
-  <header class="hero">
-    <div class="hero__inner">
-      <div class="hero__left">
-        <div class="hero__kicker">Vizyonda</div>
-        <h1 class="hero__title">Bugün hangi filme gidelim?</h1>
-        <p class="hero__subtitle">
-          En güncel filmleri keşfet, posterlerine göz at ve seçimini yap.
-        </p>
+<ng-container *ngIf="view$ | async as view">
+  <div class="home">
+    <header class="hero">
+      <div class="hero__inner">
+        <div class="hero__left">
+          <div class="hero__kicker">Vizyonda</div>
+          <h1 class="hero__title">Bugün hangi filme gidelim?</h1>
+          <p class="hero__subtitle">
+            En güncel filmleri keşfet, posterlerine göz at ve seçimini yap.
+          </p>
+
+          <div class="filter-bar">
+            <label class="filter-bar__label" for="event-date">Etkinlik Tarihi</label>
+            <input
+              id="event-date"
+              class="filter-bar__date"
+              type="date"
+              [ngModel]="view.filters.eventDate"
+              (ngModelChange)="onEventDateChange($event)"
+            />
+            <button type="button" class="filter-bar__btn" (click)="openFilterModal()">
+              Filtrele
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="hero__right">
-        <div class="hero__badge">
-          <div class="hero__badgeTop">Sinema</div>
-          <div class="hero__badgeBottom">Bilet</div>
+    </header>
+
+    <main class="content" aria-live="polite">
+      <div class="status" *ngIf="view.vm.isLoading">Filmler yükleniyor…</div>
+      <div class="status status--error" *ngIf="!view.vm.isLoading && view.vm.errorMessage">
+        {{ view.vm.errorMessage }}
+      </div>
+
+      <section class="section" *ngIf="!view.vm.isLoading && !view.vm.errorMessage">
+        <div class="section__header">
+          <h2 class="section__title">Vizyondaki Filmler</h2>
+          <div class="section__count">{{ view.vm.movies.length }} film</div>
+        </div>
+
+        <div class="grid" *ngIf="view.vm.movies.length; else emptyState">
+          <article
+            class="card"
+            *ngFor="let movie of view.vm.movies; trackBy: trackById"
+            [routerLink]="['/movie', movie.id]"
+          >
+            <div class="card__poster">
+              <img
+                class="card__img"
+                [src]="movie.imageUrl || ''"
+                [alt]="movie.title"
+                loading="lazy"
+                (error)="onPosterError($event)"
+              />
+            </div>
+            <div class="card__meta">
+              <div class="card__title" [title]="movie.title">{{ movie.title }}</div>
+              <app-imdb-rating [value]="movie.imdbRating" />
+            </div>
+          </article>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="status">Gösterilecek film bulunamadı.</div>
+        </ng-template>
+      </section>
+    </main>
+
+    <div
+      class="modal"
+      *ngIf="modalOpen"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="filter-modal-title"
+      (click)="closeFilterModal()"
+    >
+      <div class="modal__panel" (click)="$event.stopPropagation()">
+        <div class="modal__head">
+          <h2 id="filter-modal-title" class="modal__title">Filtreler</h2>
+          <button type="button" class="modal__close" (click)="closeFilterModal()" aria-label="Kapat">
+            ×
+          </button>
+        </div>
+
+        <div class="modal__body">
+          <section class="modal__section">
+            <h3 class="modal__section-title">Fiyat aralığı (₺)</h3>
+            <div class="modal__price-row">
+              <span class="modal__price-badge">{{ modalDraft.minPrice }}₺</span>
+              <span class="modal__price-sep">—</span>
+              <span class="modal__price-badge">{{ modalDraft.maxPrice }}₺</span>
+            </div>
+            <div class="modal__sliders">
+              <label class="modal__range-label">
+                Min
+                <input
+                  type="range"
+                  [min]="priceMin"
+                  [max]="priceMax"
+                  [step]="priceStep"
+                  [ngModel]="modalDraft.minPrice"
+                  (ngModelChange)="onDraftMinPriceInput($event)"
+                />
+              </label>
+              <label class="modal__range-label">
+                Max
+                <input
+                  type="range"
+                  [min]="priceMin"
+                  [max]="priceMax"
+                  [step]="priceStep"
+                  [ngModel]="modalDraft.maxPrice"
+                  (ngModelChange)="onDraftMaxPriceInput($event)"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="modal__section">
+            <h3 class="modal__section-title">Tür</h3>
+            <div class="chip-grid">
+              <button
+                type="button"
+                class="chip"
+                *ngFor="let g of genreOptions"
+                [class.chip--active]="isGenreSelected(g)"
+                (click)="toggleGenre(g)"
+              >
+                {{ g }}
+              </button>
+            </div>
+          </section>
+
+          <section class="modal__section">
+            <h3 class="modal__section-title">Sıralama</h3>
+            <select class="modal__select" [(ngModel)]="modalDraft.sort">
+              <option *ngFor="let o of sortOptions" [value]="o.value">{{ o.label }}</option>
+            </select>
+          </section>
+
+          <section class="modal__section">
+            <h3 class="modal__section-title">Zaman aralığı</h3>
+            <div class="chip-grid chip-grid--time">
+              <button
+                type="button"
+                class="chip chip--wide"
+                *ngFor="let slot of timeSlotOptions"
+                [class.chip--active]="isTimeSlotSelected(slot.id)"
+                (click)="toggleTimeSlot(slot.id)"
+              >
+                {{ slot.label }}
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal__footer">
+          <button type="button" class="modal__btn modal__btn--ghost" (click)="clearAllFilters()">
+            Tüm filtreleri temizle
+          </button>
+          <button type="button" class="modal__btn modal__btn--primary" (click)="applyFiltersFromModal()">
+            Etkinlikleri Göster
+          </button>
         </div>
       </div>
     </div>
-  </header>
-
-  <main class="content" aria-live="polite" *ngIf="vm$ | async as vm">
-    <div class="status" *ngIf="vm.isLoading">Filmler yükleniyor…</div>
-    <div class="status status--error" *ngIf="!vm.isLoading && vm.errorMessage">
-      {{ vm.errorMessage }}
-    </div>
-
-    <section class="section" *ngIf="!vm.isLoading && !vm.errorMessage">
-      <div class="section__header">
-        <h2 class="section__title">Vizyondaki Filmler</h2>
-        <div class="section__count">{{ vm.movies.length }} film</div>
-      </div>
-
-      <div class="grid" *ngIf="vm.movies.length; else emptyState">
-        <article
-          class="card"
-          *ngFor="let movie of vm.movies; trackBy: trackById"
-          [routerLink]="['/movie', movie.id]"
-        >
-          <div class="card__poster">
-            <img
-              class="card__img"
-              [src]="movie.imageUrl || ''"
-              [alt]="movie.title"
-              loading="lazy"
-              (error)="onPosterError($event)"
-            />
-          </div>
-          <div class="card__meta">
-            <div class="card__title" [title]="movie.title">{{ movie.title }}</div>
-          </div>
-        </article>
-      </div>
-
-      <ng-template #emptyState>
-        <div class="status">Gösterilecek film bulunamadı.</div>
-      </ng-template>
-    </section>
-  </main>
-</div>
-
+  </div>
+</ng-container>

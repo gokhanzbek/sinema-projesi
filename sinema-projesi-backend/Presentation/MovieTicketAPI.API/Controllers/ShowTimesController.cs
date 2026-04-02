@@ -40,6 +40,7 @@ namespace MovieTicketAPI.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CreateShowTimeCommandRequest request)
         {
             var response = await _mediator.Send(request);
@@ -47,6 +48,7 @@ namespace MovieTicketAPI.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] UpdateShowTimeCommandRequest request)
         {
             var response = await _mediator.Send(request);
@@ -54,6 +56,7 @@ namespace MovieTicketAPI.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var response = await _mediator.Send(new RemoveShowTimeCommandRequest { Id = id });

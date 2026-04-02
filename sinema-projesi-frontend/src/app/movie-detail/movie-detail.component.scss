@@ -180,44 +180,176 @@
   color: rgba(242, 244, 255, 0.8);
 }
 
-.date-list {
-  display: grid;
+.date-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 14, 24, 0.65);
+  overflow: hidden;
+}
+
+.date-strip__nav {
+  flex: 0 0 44px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(242, 244, 255, 0.85);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: rgba(124, 58, 237, 0.2);
+    color: #ffffff;
+  }
+}
+
+.date-strip__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.date-strip__track {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: 100%;
+}
+
+.date-tab {
+  flex: 1 1 0;
+  min-width: 120px;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 12px 16px;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: rgba(221, 225, 236, 0.88);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:first-of-type {
+    border-left: none;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+  }
+
+  &.active {
+    color: #ffffff;
+    background: rgba(124, 58, 237, 0.12);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 12px;
+      right: 12px;
+      height: 4px;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(90deg, #7c3aed 0%, #db2777 100%);
+      box-shadow: 0 -2px 12px rgba(219, 39, 119, 0.45);
+    }
+  }
+}
+
+.date-tab__primary {
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.date-tab__secondary {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(221, 225, 236, 0.55);
+  text-align: center;
+  min-height: 1em;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.date-tab.active .date-tab__secondary {
+  color: rgba(244, 196, 255, 0.85);
+}
+
+.hall-cards {
+  display: flex;
+  flex-direction: column;
   gap: 14px;
 }
 
-.date-card {
+.hall-card {
   border-radius: 16px;
-  padding: 16px;
-  background: linear-gradient(180deg, rgba(16, 22, 36, 0.8), rgba(9, 12, 20, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.36);
+  padding: 18px 18px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
 }
 
-.date-card__title {
-  margin: 0 0 14px;
+.hall-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.hall-card__info {
+  min-width: 0;
+}
+
+.hall-card__name {
+  font-weight: 800;
   font-size: 17px;
   color: #ffffff;
+  letter-spacing: -0.02em;
 }
 
-.hall-list {
-  display: grid;
-  gap: 12px;
+.hall-card__meta {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(221, 225, 236, 0.65);
 }
 
-.hall-row {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  align-items: start;
-  gap: 12px;
-}
-
-.hall-row__name {
+.hall-card__date-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
   font-weight: 650;
-  color: rgba(232, 237, 255, 0.92);
-  padding-top: 8px;
+  color: rgba(232, 237, 255, 0.88);
 }
 
-.hall-row__times {
+.hall-card__calendar-icon {
+  flex-shrink: 0;
+  color: rgba(167, 139, 250, 0.95);
+}
+
+.hall-card__times {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -228,14 +360,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 88px;
-  border-radius: 12px;
-  border: 1px solid rgba(167, 139, 250, 0.35);
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(219, 39, 119, 0.25));
-  color: #ffffff;
-  padding: 8px 10px;
+  min-width: 84px;
+  border-radius: 10px;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  background: rgba(8, 11, 20, 0.45);
+  color: rgba(233, 212, 255, 0.98);
+  padding: 10px 12px;
   cursor: pointer;
-  transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .time-chip span {
@@ -252,6 +385,7 @@
   transform: translateY(-1px);
   filter: brightness(1.08);
   border-color: rgba(236, 72, 153, 0.55);
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25);
 }
 
 @media (max-width: 920px) {
@@ -268,13 +402,18 @@
     padding-top: 0;
   }
 
-  .hall-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
+  .date-tab {
+    min-width: 108px;
+    max-width: none;
   }
 
-  .hall-row__name {
-    padding-top: 0;
+  .hall-card__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hall-card__date-badge {
+    align-self: flex-end;
   }
 }
 

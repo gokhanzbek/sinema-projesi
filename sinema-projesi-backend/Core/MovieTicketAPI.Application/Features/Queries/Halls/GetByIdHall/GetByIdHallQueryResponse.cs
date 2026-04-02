@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,9 @@ namespace MovieTicketAPI.Application.Features.Queries.Halls.GetByIdHall
     public class GetByIdHallQueryResponse
     {
         public int Id { get; set; }
-        public string Name { get; set; } // Hall içindeki kendi alanlarını buraya yazarsın
+        public string Name { get; set; }
+        public int Capacity { get; set; }
+        public int RowCount { get; set; }
+        public int ColumnCount { get; set; }
     }
 }

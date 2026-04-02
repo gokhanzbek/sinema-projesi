@@ -1,11 +1,7 @@
-﻿using MediatR;
+using MediatR;
 using MovieTicketAPI.Application.Abstractions.Services;
 using MovieTicketAPI.Application.Repositories.Tickets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MovieTicketAPI.Domain.Enums;
 
 namespace MovieTicketAPI.Application.Features.Command.Tickets.RemoveTicket
 {
@@ -48,14 +44,19 @@ namespace MovieTicketAPI.Application.Features.Command.Tickets.RemoveTicket
                 return new RemoveTicketCommandResponse { Succeeded = false, Message = "Sadece kendi biletlerinizi iptal edebilirsiniz!" };
             }
 
-            // 4. Her şey tamamsa bileti sil (Koltuk artık boşa çıktı!)
-            await _ticketWriteRepository.RemoveAsync(ticket.Id.ToString());
+            if (ticket.Status != TicketStatus.Active)
+            {
+                return new RemoveTicketCommandResponse { Succeeded = false, Message = "Bu bilet zaten iptal edilmiş veya kullanılamaz." };
+            }
+
+            ticket.Status = TicketStatus.Canceled;
+            _ticketWriteRepository.Update(ticket);
             await _ticketWriteRepository.SaveAsync();
 
             return new RemoveTicketCommandResponse
             {
                 Succeeded = true,
-                Message = "Biletiniz başarıyla iptal edildi ve koltuğunuz boşa çıktı."
+                Message = "Biletiniz iptal edildi; koltuk tekrar satışa açıldı."
             };
         }
     }

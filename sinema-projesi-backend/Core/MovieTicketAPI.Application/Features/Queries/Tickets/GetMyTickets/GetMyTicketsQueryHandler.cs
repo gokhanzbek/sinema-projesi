@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieTicketAPI.Application.Abstractions.Services;
 using MovieTicketAPI.Application.Repositories.Tickets;
@@ -38,7 +38,9 @@ namespace MovieTicketAPI.Application.Features.Queries.Tickets.GetMyTickets
                     t.SeatNumber,
                     t.Price,
                     t.ShowtimeId,
-                    // İstersen t.Showtime.Movie.Title diyerek film adını bile getirebilirsin (Include gerektirebilir)
+                    MovieTitle = t.Showtime.Movie.Title,
+                    ShowtimeStart = t.Showtime.StartTime,
+                    Status = t.Status
                 })
                 .ToListAsync(cancellationToken);
 

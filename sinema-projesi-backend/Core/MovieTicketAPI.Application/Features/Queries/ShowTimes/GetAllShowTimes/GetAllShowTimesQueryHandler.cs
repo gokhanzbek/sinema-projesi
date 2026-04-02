@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieTicketAPI.Application.Repositories.Showtimes;
 using System;
@@ -31,11 +31,9 @@ namespace MovieTicketAPI.Application.Features.Queries.ShowTimes.GetAllShowTimes
             var showTimes = await query.Select(s => new
             {
                 s.Id,
-                s.StartTime,
-                s.Price,
-                s.MovieId,
-                s.HallId
-                // İleride "s.Movie.Title" gibi filmin adını da buraya ekleyebilirsin!
+                MovieName = s.Movie.Title,
+                HallName = s.Hall.Name,
+                s.StartTime
             }).ToListAsync();
 
             // 4. Hazırladığımız verileri Response nesnesine koy ve yolla

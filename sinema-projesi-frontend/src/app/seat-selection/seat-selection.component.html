@@ -1,0 +1,89 @@
+<div class="seat-page">
+  <header class="seat-page__top">
+    <a routerLink="/" class="seat-page__back">← Ana sayfa</a>
+    <h1 class="seat-page__title">Koltuk seçimi</h1>
+  </header>
+
+  <div class="seat-page__status" *ngIf="isLoading">Seans ve koltuklar yükleniyor…</div>
+  <div class="seat-page__status seat-page__status--error" *ngIf="!isLoading && loadError">
+    {{ loadError }}
+  </div>
+
+  <main class="seat-main" *ngIf="!isLoading && !loadError">
+    <div class="screen-wrap">
+      <div class="screen-glow" aria-hidden="true"></div>
+      <div class="screen-label">PERDE</div>
+    </div>
+
+    <p class="legend-hint">Ekranın önünden bakıyormuş gibi düşünün.</p>
+
+    <div class="grid-wrap" [style.--seat-cols]="colLabels.length">
+      <div class="grid-corner" aria-hidden="true"></div>
+      <div class="grid-cols-header">
+        <span class="col-head" *ngFor="let c of colLabels; trackBy: trackCol">{{ c }}</span>
+      </div>
+
+      <ng-container *ngFor="let rowSeats of seatRows; trackBy: trackRow">
+        <div class="row-label">{{ rowSeats[0]?.row }}</div>
+        <div class="row-seats">
+          <button
+            type="button"
+            class="seat"
+            *ngFor="let seat of rowSeats; trackBy: trackSeat"
+            [class.seat--occupied]="seat.status === 'occupied'"
+            [class.seat--selected]="isSelected(seat)"
+            [disabled]="seat.status === 'occupied'"
+            (click)="toggleSeat(seat)"
+            [attr.aria-label]="
+              seat.status === 'occupied'
+                ? 'Dolu koltuk ' + seat.id
+                : (isSelected(seat) ? 'Seçili koltuk ' : 'Boş koltuk ') + seat.id
+            "
+          >
+            <span *ngIf="seat.status === 'occupied'" class="seat__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  fill="currentColor"
+                  opacity="0.9"
+                />
+              </svg>
+            </span>
+            <span *ngIf="seat.status !== 'occupied'">{{ seat.col }}</span>
+          </button>
+        </div>
+      </ng-container>
+    </div>
+
+    <ul class="legend">
+      <li><span class="legend-sample legend-sample--free"></span> Müsait</li>
+      <li><span class="legend-sample legend-sample--selected"></span> Seçili</li>
+      <li><span class="legend-sample legend-sample--occ"></span> Dolu</li>
+    </ul>
+  </main>
+
+  <footer class="action-bar" *ngIf="!isLoading && !loadError">
+    <div class="action-bar__left">
+      <span class="action-bar__label">Seçilen:</span>
+      <span class="action-bar__seats" *ngIf="selectedList.length; else noneSel">
+        {{ selectedList.join(', ') }}
+      </span>
+      <ng-template #noneSel><span class="action-bar__muted">Henüz seçim yok</span></ng-template>
+    </div>
+    <div class="action-bar__center">
+      <span class="action-bar__total-label">Toplam Tutar:</span>
+      <strong class="action-bar__total">{{ formatPrice(totalAmount) }}</strong>
+    </div>
+    <div class="action-bar__right">
+      <p class="action-bar__msg" *ngIf="purchaseMessage">{{ purchaseMessage }}</p>
+      <button
+        type="button"
+        class="action-bar__cta"
+        [disabled]="!selected.size || purchasing"
+        (click)="checkout()"
+      >
+        {{ purchasing ? 'İşleniyor…' : 'Ödemeye Geç / Satın Al' }}
+      </button>
+    </div>
+  </footer>
+</div>

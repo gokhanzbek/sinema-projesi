@@ -1,12 +1,6 @@
-﻿using MediatR;
-using MovieTicketAPI.Application.Abstractions.Services;
-using MovieTicketAPI.Application.Repositories;
+using MediatR;
+using MovieTicketAPI.Application.Helpers;
 using MovieTicketAPI.Application.Repositories.Halls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieTicketAPI.Application.Features.Command.Halls.CreateHall
 {
@@ -21,25 +15,33 @@ namespace MovieTicketAPI.Application.Features.Command.Halls.CreateHall
 
         public async Task<CreateHallCommandResponse> Handle(CreateHallCommandRequest request, CancellationToken cancellationToken)
         {
-            
-
-            
-
-            Domain.Entities.Hall NewHall = new Domain.Entities.Hall
+            var err = HallGridHelper.ValidateDimensions(request.RowCount, request.ColumnCount);
+            if (err != null)
             {
-                Capacity = request.Capacity,
+                return new CreateHallCommandResponse
+                {
+                    IsSuccess = false,
+                    Message = err
+                };
+            }
+
+            var cap = request.RowCount * request.ColumnCount;
+            var newHall = new Domain.Entities.Hall
+            {
                 Name = request.Name,
+                RowCount = request.RowCount,
+                ColumnCount = request.ColumnCount,
+                Capacity = cap
             };
-            await _hallWriteRepository.AddAsync(NewHall);
+            await _hallWriteRepository.AddAsync(newHall);
             await _hallWriteRepository.SaveAsync();
 
-            return new CreateHallCommandResponse {
+            return new CreateHallCommandResponse
+            {
                 IsSuccess = true,
-                Message = "salon başarıyla oluşturuldu"!,
-                Id = NewHall.Id
+                Message = "Salon başarıyla oluşturuldu.",
+                Id = newHall.Id
             };
-
-
         }
     }
 }

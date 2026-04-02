@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using MovieTicketAPI.Application;
 using MovieTicketAPI.Infrastructure; 
 using MovieTicketAPI.Persistence;
+using System.Reflection;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +13,14 @@ using MovieTicketAPI.Domain.Entities.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// User-secrets yalnızca Development’ta otomatik yüklenir; VS’de Production vb. profilde OMDb anahtarı boş kalmasın diye burada da eklenir (secrets.json yoksa yok sayılır).
+builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true);
+
 // Add services to the container.
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5_242_880; // 5 MB
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -48,7 +57,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 // Eğer Infrastructure katmanın varsa (Token servisleri vb. için) bu satırı da eklemelisin:
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // CurrentUser gibi işlemlerde HttpContext'e erişebilmek için:
 builder.Services.AddHttpContextAccessor();
@@ -102,6 +111,8 @@ app.UseCors("AllowAll");
 // --- 3. KİMLİK VE YETKİ KONTROLÜ (Sıralama önemli!) ---
 app.UseAuthentication(); // Önce kimlik doğrulanır (Sen kimsin?)
 app.UseAuthorization();  // Sonra yetki kontrol edilir (Bunu yapmaya iznin var mı?)
+
+app.UseStaticFiles();
 
 app.MapControllers();
 

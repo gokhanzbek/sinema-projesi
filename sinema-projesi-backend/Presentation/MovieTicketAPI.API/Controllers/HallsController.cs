@@ -42,6 +42,7 @@ namespace MovieTicketAPI.API.Controllers
 
         // 3. POST: Yeni salon ekle
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CreateHallCommandRequest request)
         {
             var response = await _mediator.Send(request);
@@ -50,6 +51,7 @@ namespace MovieTicketAPI.API.Controllers
 
         // 4. PUT: Salon güncelle
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] UpdateHallCommandRequest request)
         {
             var response = await _mediator.Send(request);
@@ -58,6 +60,7 @@ namespace MovieTicketAPI.API.Controllers
 
         // 5. DELETE: Salon sil
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var response = await _mediator.Send(new RemoveHallCommandRequest { Id = id });

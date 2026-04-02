@@ -1,0 +1,127 @@
+.login-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(1200px 600px at 50% 0%, rgba(124, 58, 237, 0.18), transparent 55%),
+    #080b14;
+  color: #f2f4ff;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.login-title {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.login-hint {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: rgba(221, 225, 236, 0.72);
+  line-height: 1.5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(232, 237, 255, 0.88);
+
+  input {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(8, 11, 20, 0.75);
+    color: #fff;
+    padding: 12px 14px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-color: rgba(167, 139, 250, 0.65);
+    }
+  }
+}
+
+.login-error {
+  font-size: 13px;
+  color: #fda4af;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+}
+
+.login-submit {
+  margin-top: 4px;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #8b5cf6 100%);
+  box-shadow: 0 14px 36px rgba(139, 92, 246, 0.45);
+  transition: filter 0.2s ease, transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.login-footer {
+  margin: 20px 0 0;
+  font-size: 14px;
+  color: rgba(221, 225, 236, 0.65);
+  text-align: center;
+
+  a {
+    color: #c4b5fd;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+.back-home {
+  display: inline-block;
+  margin-top: 22px;
+  color: rgba(242, 244, 255, 0.8);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+
+  &:hover {
+    color: #fff;
+  }
+}

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   catchError,
   forkJoin,
@@ -8,10 +8,13 @@ import {
   Observable,
   of,
   startWith,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs';
 import { DateShowtimes, MovieDetail } from '../models/movie.models';
+import { AuthService } from '../services/auth.service';
 import { MovieService } from '../services/movie.service';
+import { ImdbRatingComponent } from '../shared/imdb-rating/imdb-rating.component';
 
 type MovieDetailVm = {
   isLoading: boolean;
@@ -20,18 +23,38 @@ type MovieDetailVm = {
   showtimes: DateShowtimes[];
 };
 
+const TR_MONTH_INDEX: Record<string, number> = {
+  Ocak: 0,
+  Şubat: 1,
+  Mart: 2,
+  Nisan: 3,
+  Mayıs: 4,
+  Haziran: 5,
+  Temmuz: 6,
+  Ağustos: 7,
+  Eylül: 8,
+  Ekim: 9,
+  Kasım: 10,
+  Aralık: 11
+};
+
 @Component({
   selector: 'app-movie-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ImdbRatingComponent],
   templateUrl: './movie-detail.component.html',
   styleUrl: './movie-detail.component.scss'
 })
 export class MovieDetailComponent {
+  @ViewChild('dateStripViewport') dateStripViewport?: ElementRef<HTMLElement>;
+
   readonly vm$: Observable<MovieDetailVm>;
+  selectedDateTitle: string | null = null;
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly auth: AuthService,
     private readonly movieService: MovieService
   ) {
     this.vm$ = this.route.paramMap.pipe(
@@ -52,6 +75,15 @@ export class MovieDetailComponent {
             .getShowtimesByMovie(id)
             .pipe(catchError(() => of([] as DateShowtimes[])))
         }).pipe(
+          tap(({ showtimes }) => {
+            if (showtimes && showtimes.length > 0) {
+              if (!this.selectedDateTitle) {
+                this.selectedDateTitle = showtimes[0].dateTitle;
+              }
+            } else {
+              this.selectedDateTitle = null;
+            }
+          }),
           map(({ movie, showtimes }) => ({
             isLoading: false,
             errorMessage: null,
@@ -97,6 +129,76 @@ export class MovieDetailComponent {
 
   formatPrice(price: number): string {
     return `${price.toFixed(0)} TL`;
+  }
+
+  selectDate(dateTitle: string): void {
+    this.selectedDateTitle = dateTitle;
+  }
+
+  onSessionClick(showtimeId: number): void {
+    const movieId = this.route.snapshot.paramMap.get('id');
+    const returnUrl = movieId ? `/movie/${movieId}` : '/';
+
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl }
+      });
+      return;
+    }
+
+    this.router.navigate(['/session', showtimeId, 'seats']);
+  }
+
+  scrollDateStrip(direction: number): void {
+    const el = this.dateStripViewport?.nativeElement;
+    if (!el) return;
+    el.scrollBy({ left: direction * 220, behavior: 'smooth' });
+  }
+
+  formatTabPrimary(dateTitle: string): string {
+    const parts = dateTitle.trim().split(/\s+/);
+    if (parts.length >= 4 && /^\d{4}$/.test(parts[2])) {
+      return `${parts[0]} ${parts[1]} ${parts[3]}`;
+    }
+    return dateTitle;
+  }
+
+  formatCardDateLine(dateTitle: string): string {
+    const parts = dateTitle.trim().split(/\s+/);
+    if (parts.length >= 4 && /^\d{4}$/.test(parts[2])) {
+      return `${parts[0]} ${parts[1]} ${parts[2]}`;
+    }
+    return dateTitle;
+  }
+
+  formatTabRelative(dateTitle: string): string {
+    const d = this.parseDateFromTitle(dateTitle);
+    if (!d) return '';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const diffDays = Math.round((target.getTime() - today.getTime()) / 86400000);
+    if (diffDays === 0) return 'Bugün';
+    if (diffDays === 1) return 'Yarın';
+    const dow = target.getDay();
+    if (dow === 0 || dow === 6) return 'Hafta sonu';
+    return '';
+  }
+
+  formatHallSubtitle(movie: MovieDetail): string {
+    const fromCats = movie.categories?.filter(Boolean).join(', ')?.trim();
+    const g = fromCats || movie.genre?.trim();
+    return g || 'Gösterim';
+  }
+
+  private parseDateFromTitle(dateTitle: string): Date | null {
+    const parts = dateTitle.trim().split(/\s+/);
+    if (parts.length < 4) return null;
+    const day = parseInt(parts[0], 10);
+    const monthIdx = TR_MONTH_INDEX[parts[1]];
+    const year = parseInt(parts[2], 10);
+    if (Number.isNaN(day) || monthIdx === undefined || Number.isNaN(year)) return null;
+    return new Date(year, monthIdx, day);
   }
 
   onPosterError(event: Event): void {

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,11 +7,15 @@ using MovieTicketAPI.Application.Repositories.Halls;
 using MovieTicketAPI.Application.Repositories.Movies;
 using MovieTicketAPI.Application.Repositories.Movies.MovieTicketAPI.Domain.Repositories;
  using MovieTicketAPI.Application.Repositories.Movies.MovieTicketAPI.Domain.Repositories; // Bu satır hatalı görünüyordu, düzelttim.
+using MovieTicketAPI.Application.Repositories.Categories;
+using MovieTicketAPI.Application.Repositories.MovieCategories;
 using MovieTicketAPI.Application.Repositories.Showtimes;
 using MovieTicketAPI.Application.Repositories.Tickets;
 using MovieTicketAPI.Domain.Entities.Identity;
 using MovieTicketAPI.Persistence.Contexts;
+using MovieTicketAPI.Persistence.Repositories.Categories;
 using MovieTicketAPI.Persistence.Repositories.Halls;
+using MovieTicketAPI.Persistence.Repositories.MovieCategories;
 using MovieTicketAPI.Persistence.Repositories.Movies;
 using MovieTicketAPI.Persistence.Repositories.Showtimes;
 using MovieTicketAPI.Persistence.Repositories.Tickets;
@@ -46,6 +50,11 @@ namespace MovieTicketAPI.Persistence
             // --- MOVIE ---
             services.AddScoped<IMovieReadRepository, MovieReadRepository>();
             services.AddScoped<IMovieWriteRepository, MovieWriteRepository>();
+
+            // --- CATEGORY ---
+            services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+            services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
+            services.AddScoped<IMovieCategoryRepository, MovieCategoryRepository>();
 
             // --- HALL ---
             services.AddScoped<IHallReadRepository, HallReadRepository>();

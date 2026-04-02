@@ -1,0 +1,30 @@
+<section class="login-page">
+  <div class="login-card">
+    <h1 class="login-title">Giriş Yap</h1>
+    <p class="login-hint">Bilet seçmek için hesabınızla giriş yapın.</p>
+
+    <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Kullanıcı adı veya e-posta</span>
+        <input type="text" formControlName="usernameOrEmail" autocomplete="username" />
+      </label>
+      <label class="field">
+        <span>Şifre</span>
+        <input type="password" formControlName="password" autocomplete="current-password" />
+      </label>
+
+      <div class="login-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button type="submit" class="login-submit" [disabled]="submitting">
+        {{ submitting ? 'Giriş yapılıyor…' : 'Giriş' }}
+      </button>
+    </form>
+
+    <p class="login-footer">
+      Hesabın yok mu?
+      <a routerLink="/register">Kayıt ol</a>
+    </p>
+
+    <a routerLink="/" class="back-home">← Ana sayfa</a>
+  </div>
+</section>

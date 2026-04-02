@@ -1,0 +1,32 @@
+<section class="success-page" aria-labelledby="success-title">
+  <div class="success-card">
+    <div class="success-icon-wrap" aria-hidden="true">
+      <svg class="success-icon" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="52" stroke="url(#successGrad)" stroke-width="3" opacity="0.35" />
+        <circle cx="60" cy="60" r="44" stroke="url(#successGrad)" stroke-width="2.5" />
+        <path
+          d="M38 62 L54 78 L84 44"
+          stroke="url(#successGrad)"
+          stroke-width="5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <defs>
+          <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#34d399" />
+            <stop offset="50%" stop-color="#10b981" />
+            <stop offset="100%" stop-color="#059669" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <h1 id="success-title" class="success-title">Ödeme Başarılı!</h1>
+    <p class="success-sub">Biletleriniz başarıyla oluşturuldu.</p>
+
+    <div class="success-actions">
+      <a routerLink="/" class="btn btn--outline">Ana Sayfaya Dön</a>
+      <a routerLink="/my-tickets" class="btn btn--primary">Biletlerimi Görüntüle</a>
+    </div>
+  </div>
+</section>

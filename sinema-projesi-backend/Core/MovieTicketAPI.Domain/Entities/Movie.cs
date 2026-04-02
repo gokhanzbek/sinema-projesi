@@ -1,4 +1,4 @@
-﻿using MovieTicketAPI.Domain.Entities.Common;
+using MovieTicketAPI.Domain.Entities.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +11,19 @@ namespace MovieTicketAPI.Domain.Entities
     {
         public string Title { get; set; }           // Ad (nvarchar 150)
         public int DurationInMinutes { get; set; }  // Suresi (int)
-        public string Genre { get; set; }           // Tur (nvarchar 50)
         public string ImageUrl { get; set; }
         public string Director { get; set; }        // Yonetmen (nvarchar 100)
         public int ReleaseYear { get; set; }        // Yil (int)
         public string Description { get; set; }     // Aciklama (nvarchar 500)
 
-        
+        /// <summary>IMDb film kimliği (örn. tt1234567); OMDb kesin arama için.</summary>
+        public string? ImdbId { get; set; }
+
+        /// <summary>IMDb puanı (ileride doldurulacak; sıralama ve gösterim için).</summary>
+        public decimal? ImdbRating { get; set; }
+
         public ICollection<Showtime> Showtimes { get; set; } = new List<Showtime>();
+
+        public ICollection<MovieCategory> MovieCategories { get; set; } = new List<MovieCategory>();
     }
 }

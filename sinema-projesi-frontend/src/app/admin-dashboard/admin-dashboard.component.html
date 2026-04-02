@@ -1,0 +1,305 @@
+<section class="admin-page">
+  <div class="admin-page__inner">
+    <header class="admin-head">
+      <a routerLink="/" class="admin-head__back">← Siteye dön</a>
+      <h1 class="admin-head__title">Yönetim paneli</h1>
+    </header>
+
+    <nav class="tab-bar" aria-label="Admin sekmeleri">
+      <button
+        type="button"
+        class="tab-bar__btn"
+        [class.tab-bar__btn--active]="isTab('movies')"
+        (click)="setTab('movies')"
+      >
+        Filmler
+      </button>
+      <button
+        type="button"
+        class="tab-bar__btn"
+        [class.tab-bar__btn--active]="isTab('halls')"
+        (click)="setTab('halls')"
+      >
+        Salonlar
+      </button>
+      <button
+        type="button"
+        class="tab-bar__btn"
+        [class.tab-bar__btn--active]="isTab('sessions')"
+        (click)="setTab('sessions')"
+      >
+        Seanslar
+      </button>
+    </nav>
+
+    <!-- Filmler -->
+    <div class="tab-panel" *ngIf="isTab('movies')" role="tabpanel">
+      <div class="toolbar toolbar--movies">
+        <button
+          type="button"
+          class="toolbar__secondary"
+          [disabled]="imdbSyncing"
+          (click)="syncImdbRatings()"
+        >
+          {{ imdbSyncing ? 'IMDb güncelleniyor…' : 'IMDb puanlarını güncelle (OMDb)' }}
+        </button>
+        <button type="button" class="toolbar__cta" (click)="openMovieCreate()">+ Yeni Film Ekle</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="data-table__th data-table__th--poster">Afiş</th>
+              <th class="data-table__th">Film adı</th>
+              <th class="data-table__th">Kategoriler</th>
+              <th class="data-table__th data-table__th--actions">İşlemler</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="data-table__row" *ngFor="let m of movies; trackBy: trackMovie">
+              <td class="data-table__td">
+                <div class="poster-thumb">
+                  <img
+                    *ngIf="m.posterUrl"
+                    [src]="m.posterUrl"
+                    [alt]="m.title"
+                    class="poster-thumb__img"
+                  />
+                  <span *ngIf="!m.posterUrl" class="poster-thumb__ph">—</span>
+                </div>
+              </td>
+              <td class="data-table__td">{{ m.title }}</td>
+              <td class="data-table__td">{{ m.categoriesLabel || '—' }}</td>
+              <td class="data-table__td data-table__td--actions">
+                <button type="button" class="link-btn" (click)="openMovieEdit(m)">Düzenle</button>
+                <button type="button" class="link-btn link-btn--danger" (click)="deleteMovie(m)">Sil</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Salonlar -->
+    <div class="tab-panel" *ngIf="isTab('halls')" role="tabpanel">
+      <div class="toolbar">
+        <button type="button" class="toolbar__cta" (click)="openHallCreate()">+ Yeni Salon Ekle</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="data-table__th">Salon adı</th>
+              <th class="data-table__th">Düzen</th>
+              <th class="data-table__th">Kapasite</th>
+              <th class="data-table__th data-table__th--actions">İşlemler</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="data-table__row" *ngFor="let h of halls; trackBy: trackHall">
+              <td class="data-table__td">{{ h.name }}</td>
+              <td class="data-table__td">{{ h.rowCount }} × {{ h.columnCount }}</td>
+              <td class="data-table__td">{{ h.capacity }}</td>
+              <td class="data-table__td data-table__td--actions">
+                <button type="button" class="link-btn" (click)="openHallEdit(h)">Düzenle</button>
+                <button type="button" class="link-btn link-btn--danger" (click)="deleteHall(h)">Sil</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Seanslar -->
+    <div class="tab-panel" *ngIf="isTab('sessions')" role="tabpanel">
+      <div class="toolbar">
+        <button
+          type="button"
+          class="toolbar__cta"
+          (click)="openSessionCreate()"
+          [disabled]="!movies.length || !halls.length"
+          [title]="!movies.length || !halls.length ? 'Önce en az bir film ve salon gerekli' : ''"
+        >
+          + Yeni Seans Oluştur
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="data-table__th">Film</th>
+              <th class="data-table__th">Salon</th>
+              <th class="data-table__th">Tarih</th>
+              <th class="data-table__th">Saat</th>
+              <th class="data-table__th data-table__th--actions">İşlemler</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="data-table__row" *ngFor="let s of sessions; trackBy: trackSession">
+              <td class="data-table__td">{{ s.movieName }}</td>
+              <td class="data-table__td">{{ s.hallName }}</td>
+              <td class="data-table__td">{{ s.date }}</td>
+              <td class="data-table__td">{{ s.time }}</td>
+              <td class="data-table__td data-table__td--actions">
+                <button type="button" class="link-btn" (click)="openSessionEdit(s)">Düzenle</button>
+                <button type="button" class="link-btn link-btn--danger" (click)="deleteSession(s)">Sil</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Film -->
+  <div class="modal" *ngIf="movieModalOpen" role="dialog" aria-modal="true" aria-labelledby="movie-modal-title">
+    <div class="modal__backdrop" (click)="closeMovieModal()"></div>
+    <div class="modal__panel">
+      <h2 id="movie-modal-title" class="modal__title">
+        {{ movieEditId == null ? 'Yeni film' : 'Film düzenle' }}
+      </h2>
+      <form [formGroup]="movieForm" (ngSubmit)="saveMovie()" class="modal__form">
+        <label class="field">
+          <span class="field__label">Başlık *</span>
+          <input class="field__input" type="text" formControlName="title" />
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span class="field__label">Süre (dk) *</span>
+            <input class="field__input" type="number" formControlName="durationInMinutes" />
+          </label>
+          <label class="field">
+            <span class="field__label">Yıl *</span>
+            <input class="field__input" type="number" formControlName="releaseYear" />
+          </label>
+        </div>
+        <label class="field">
+          <span class="field__label">IMDb ID (isteğe bağlı)</span>
+          <input
+            class="field__input"
+            type="text"
+            formControlName="imdbId"
+            placeholder="Örn: tt1234567"
+            autocomplete="off"
+          />
+          <span class="field__hint">OMDb kesin eşleşme için; boş bırakılırsa başlık + yıl kullanılır.</span>
+        </label>
+        <div class="field">
+          <span class="field__label">Kategoriler *</span>
+          <div class="category-chips" *ngIf="categoryOptions.length; else noCats">
+            <label class="cat-check" *ngFor="let c of categoryOptions">
+              <input
+                type="checkbox"
+                [checked]="isMovieCategorySelected(c.id)"
+                (change)="toggleMovieCategory(c.id)"
+              />
+              <span>{{ c.name }}</span>
+            </label>
+          </div>
+          <ng-template #noCats>
+            <p class="field__hint">Kategori listesi yüklenemedi veya boş.</p>
+          </ng-template>
+        </div>
+        <label class="field">
+          <span class="field__label">Yönetmen</span>
+          <input class="field__input" type="text" formControlName="director" />
+        </label>
+        <div class="field">
+          <span class="field__label">Afiş</span>
+          <div class="poster-upload-row">
+            <input
+              type="file"
+              class="field__input poster-upload-row__file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              [disabled]="posterUploading"
+              (change)="onPosterFileSelected($event)"
+            />
+            <span *ngIf="posterUploading" class="field__hint">Yükleniyor…</span>
+          </div>
+          <label class="field field--nested">
+            <span class="field__label">Afiş URL (isteğe bağlı / harici link)</span>
+            <input class="field__input" type="text" formControlName="imageUrl" placeholder="Yükle veya URL yapıştır" />
+          </label>
+          <div class="poster-preview" *ngIf="movieForm.get('imageUrl')?.value">
+            <img
+              [src]="$any(movieForm.get('imageUrl')?.value)"
+              alt="Afiş önizleme"
+              class="poster-preview__img"
+            />
+          </div>
+        </div>
+        <label class="field">
+          <span class="field__label">Açıklama</span>
+          <textarea class="field__textarea" rows="3" formControlName="description"></textarea>
+        </label>
+        <div class="modal__actions">
+          <button type="button" class="modal__btn modal__btn--ghost" (click)="closeMovieModal()">İptal</button>
+          <button type="submit" class="modal__btn modal__btn--primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Salon -->
+  <div class="modal" *ngIf="hallModalOpen" role="dialog" aria-modal="true">
+    <div class="modal__backdrop" (click)="closeHallModal()"></div>
+    <div class="modal__panel">
+      <h2 class="modal__title">{{ hallEditId == null ? 'Yeni salon' : 'Salon düzenle' }}</h2>
+      <form [formGroup]="hallForm" (ngSubmit)="saveHall()" class="modal__form">
+        <label class="field">
+          <span class="field__label">Salon adı *</span>
+          <input class="field__input" type="text" formControlName="name" />
+        </label>
+        <label class="field">
+          <span class="field__label">Sıra sayısı (satır) *</span>
+          <input class="field__input" type="number" min="1" max="26" formControlName="rowCount" />
+        </label>
+        <label class="field">
+          <span class="field__label">Sıradaki koltuk (sütun) *</span>
+          <input class="field__input" type="number" min="1" max="40" formControlName="columnCount" />
+        </label>
+        <p class="field-hint modal__hint">
+          Toplam koltuk: <strong>{{ hallPreviewTotal() }}</strong> (satır × sütun)
+        </p>
+        <div class="modal__actions">
+          <button type="button" class="modal__btn modal__btn--ghost" (click)="closeHallModal()">İptal</button>
+          <button type="submit" class="modal__btn modal__btn--primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Seans -->
+  <div class="modal" *ngIf="sessionModalOpen" role="dialog" aria-modal="true">
+    <div class="modal__backdrop" (click)="closeSessionModal()"></div>
+    <div class="modal__panel">
+      <h2 class="modal__title">{{ sessionEditId == null ? 'Yeni seans' : 'Seans düzenle' }}</h2>
+      <form [formGroup]="sessionForm" (ngSubmit)="saveSession()" class="modal__form">
+        <label class="field">
+          <span class="field__label">Film *</span>
+          <select class="field__input" formControlName="movieId">
+            <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Salon *</span>
+          <select class="field__input" formControlName="hallId">
+            <option *ngFor="let h of halls" [ngValue]="h.id">{{ h.name }}</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Fiyat (TL) *</span>
+          <input class="field__input" type="number" step="0.01" formControlName="price" />
+        </label>
+        <label class="field">
+          <span class="field__label">Başlangıç *</span>
+          <input class="field__input" type="datetime-local" formControlName="startTime" />
+        </label>
+        <div class="modal__actions">
+          <button type="button" class="modal__btn modal__btn--ghost" (click)="closeSessionModal()">İptal</button>
+          <button type="submit" class="modal__btn modal__btn--primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

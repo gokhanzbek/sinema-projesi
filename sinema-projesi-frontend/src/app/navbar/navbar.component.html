@@ -1,0 +1,64 @@
+<nav class="navbar" aria-label="Ana navigasyon">
+  <div class="navbar__inner">
+    <a routerLink="/" class="navbar__brand">Sinema Bilet</a>
+
+    <div class="navbar__spacer"></div>
+
+    <div class="navbar__right" *ngIf="navAuth$ | async as vm">
+      <ng-container *ngIf="!vm.loggedIn">
+        <div class="nav-guest">
+          <a routerLink="/login" class="btn btn--ghost">Giriş Yap</a>
+          <a routerLink="/register" class="btn btn--accent">Kayıt Ol</a>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="vm.loggedIn">
+        <div class="nav-user" (click)="onUserAreaClick($event)">
+          <button
+            type="button"
+            class="nav-user__trigger"
+            (click)="toggleMenu($event)"
+            [attr.aria-expanded]="menuOpen"
+            aria-haspopup="true"
+            aria-label="Hesap menüsü"
+          >
+            <span class="nav-user__avatar">{{ vm.initials }}</span>
+          </button>
+
+          <div class="nav-user__dropdown" *ngIf="menuOpen" role="menu">
+            <a
+              *ngIf="vm.isAdmin"
+              routerLink="/admin"
+              class="nav-user__item"
+              role="menuitem"
+              (click)="menuOpen = false"
+            >
+              Yönetim paneli
+            </a>
+            <a
+              *ngIf="!vm.isAdmin"
+              routerLink="/my-account"
+              class="nav-user__item"
+              role="menuitem"
+              (click)="menuOpen = false"
+            >
+              Kullanıcı sayfası
+            </a>
+            <a
+              *ngIf="!vm.isAdmin"
+              routerLink="/my-tickets"
+              class="nav-user__item"
+              role="menuitem"
+              (click)="menuOpen = false"
+            >
+              Tüm Biletlerim
+            </a>
+            <button type="button" class="nav-user__item nav-user__item--danger" role="menuitem" (click)="logout()">
+              Çıkış Yap
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</nav>

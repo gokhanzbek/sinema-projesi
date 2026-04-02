@@ -1,0 +1,72 @@
+<section class="user-profile-page">
+  <div class="user-profile-page__inner">
+    <header class="page-head">
+      <a routerLink="/" class="back">← Ana sayfa</a>
+      <h1 class="title">Kullanıcı sayfası</h1>
+      <p class="subtitle">Hesap bilgileriniz ve şifre değiştirme</p>
+    </header>
+
+    <div class="user-profile__loading" *ngIf="loadingProfile">Yükleniyor…</div>
+    <div class="user-profile__error" *ngIf="!loadingProfile && loadError">{{ loadError }}</div>
+
+    <ng-container *ngIf="!loadingProfile && profile as p">
+      <div class="card">
+        <h2 class="card__title">Bilgiler</h2>
+        <dl class="info-grid">
+          <div class="info-row">
+            <dt>Ad</dt>
+            <dd>{{ p.firstName || '—' }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Soyad</dt>
+            <dd>{{ p.lastName || '—' }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>E-posta</dt>
+            <dd>{{ p.email || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="card card--password">
+        <h2 class="card__title">Şifre değiştir</h2>
+        <form [formGroup]="passwordForm" (ngSubmit)="submitPassword()" class="pwd-form">
+          <label class="field">
+            <span>Mevcut şifre</span>
+            <input
+              type="password"
+              formControlName="currentPassword"
+              autocomplete="current-password"
+            />
+          </label>
+          <label class="field">
+            <span>Yeni şifre</span>
+            <input
+              type="password"
+              formControlName="newPassword"
+              autocomplete="new-password"
+            />
+          </label>
+          <label class="field">
+            <span>Yeni şifre (tekrar)</span>
+            <input
+              type="password"
+              formControlName="confirmNewPassword"
+              autocomplete="new-password"
+            />
+          </label>
+
+          <div class="field-hint" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['minlength']">
+            En az 3 karakter (site ayarlarına göre).
+          </div>
+
+          <div class="form-error" *ngIf="passwordFormError">{{ passwordFormError }}</div>
+
+          <button type="submit" class="btn-submit" [disabled]="submittingPassword">
+            {{ submittingPassword ? 'Kaydediliyor…' : 'Şifreyi güncelle' }}
+          </button>
+        </form>
+      </div>
+    </ng-container>
+  </div>
+</section>

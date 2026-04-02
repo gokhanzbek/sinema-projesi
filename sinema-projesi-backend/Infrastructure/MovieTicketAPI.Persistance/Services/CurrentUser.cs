@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using MovieTicketAPI.Application.Abstractions.Services;
 using System;
 using System.Collections.Generic;

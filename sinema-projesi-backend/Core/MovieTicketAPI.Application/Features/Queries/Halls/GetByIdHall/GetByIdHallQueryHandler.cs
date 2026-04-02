@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using MovieTicketAPI.Application.Repositories.Halls;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,14 @@ namespace MovieTicketAPI.Application.Features.Queries.Halls.GetByIdHall
             var hall = await _hallReadRepository.GetByIdAsync(request.Id.ToString(), tracking: false);
             if (hall == null) return new GetByIdHallQueryResponse();
 
-            return new GetByIdHallQueryResponse { Id = hall.Id, Name = hall.Name };
+            return new GetByIdHallQueryResponse
+            {
+                Id = hall.Id,
+                Name = hall.Name,
+                Capacity = hall.Capacity,
+                RowCount = hall.RowCount,
+                ColumnCount = hall.ColumnCount
+            };
         }
     }   
 }

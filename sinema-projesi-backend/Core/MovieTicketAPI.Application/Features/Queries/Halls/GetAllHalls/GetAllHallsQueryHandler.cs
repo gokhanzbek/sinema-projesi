@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieTicketAPI.Application.Repositories.Halls;
 using System;
@@ -20,7 +20,7 @@ namespace MovieTicketAPI.Application.Features.Queries.Halls.GetAllHalls
             return new GetAllHallsQueryResponse
             {
                 TotalCount = await query.CountAsync(),
-                Halls = await query.Select(h => new { h.Id, h.Name }).ToListAsync() // Kendi Hall property'lerine göre burayı (Name vs.) düzenleyebilirsin
+                Halls = await query.Select(h => new { h.Id, h.Name, h.Capacity, h.RowCount, h.ColumnCount }).ToListAsync()
             };
         }
     }

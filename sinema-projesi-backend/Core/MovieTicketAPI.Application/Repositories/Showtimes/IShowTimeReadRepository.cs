@@ -1,4 +1,4 @@
-﻿using MovieTicketAPI.Domain.Entities;
+using MovieTicketAPI.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +9,6 @@ namespace MovieTicketAPI.Application.Repositories.Showtimes
 {
     public interface IShowTimeReadRepository : IReadRepository<Showtime>
     {
+        Task<Showtime?> GetByIdWithHallAsync(int id, CancellationToken cancellationToken = default);
     }
 }

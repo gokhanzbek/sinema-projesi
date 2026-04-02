@@ -1,0 +1,320 @@
+.my-tickets-page {
+  min-height: 100dvh;
+  padding: 24px 18px 48px;
+  background:
+    radial-gradient(1000px 560px at 80% -10%, rgba(124, 58, 237, 0.14), transparent 55%),
+    radial-gradient(800px 400px at 10% 100%, rgba(219, 39, 119, 0.08), transparent 50%),
+    #080b14;
+  color: #f2f4ff;
+}
+
+.my-tickets-page__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-head {
+  margin-bottom: 28px;
+}
+
+.back {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: rgba(242, 244, 255, 0.88);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.loading {
+  padding: 28px;
+  text-align: center;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(221, 225, 236, 0.75);
+  font-weight: 600;
+}
+
+.alert {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.28);
+  color: #fecdd3;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alert__link {
+  display: inline-block;
+  margin-left: 8px;
+  color: #fda4af;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.empty {
+  min-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 22px;
+  padding: 40px 20px;
+}
+
+.empty__text {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: rgba(221, 225, 236, 0.72);
+  max-width: 28ch;
+  line-height: 1.55;
+}
+
+.empty__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #db2777 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 14px 40px rgba(124, 58, 237, 0.45);
+  transition: transform 0.18s ease, filter 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+  }
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 22px;
+}
+
+.ticket-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 22px;
+  padding: 18px 18px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.ticket-card__top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.ticket-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ticket-card__body {
+  flex: 1;
+}
+
+.ticket-movie {
+  margin: 0 0 16px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.ticket-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ticket-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(221, 225, 236, 0.45);
+}
+
+.ticket-value {
+  font-size: 15px;
+  font-weight: 650;
+  color: rgba(232, 237, 255, 0.92);
+}
+
+.ticket-value--seat {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #c4b5fd;
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.45);
+}
+
+.ticket-actions {
+  margin-top: 4px;
+}
+
+.ticket-cancel {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(248, 113, 113, 0.32);
+  background: rgba(239, 68, 68, 0.14);
+  color: #fecaca;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.22);
+    border-color: rgba(252, 165, 165, 0.45);
+    box-shadow: 0 0 22px rgba(248, 113, 113, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.ticket-tear {
+  margin: 18px 0 14px;
+  height: 0;
+  border-top: 2px dashed rgba(255, 255, 255, 0.22);
+  opacity: 0.85;
+}
+
+.ticket-barcode {
+  text-align: center;
+  padding-top: 4px;
+}
+
+.ticket-barcode__text {
+  display: block;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: rgba(242, 244, 255, 0.55);
+  word-break: break-all;
+  user-select: none;
+}
+
+.ticket-barcode__id {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(221, 225, 236, 0.35);
+}
+
+/* —— Durum: Aktif (1) —— */
+.ticket-card.status-active {
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(16, 185, 129, 0.12),
+    0 0 0 1px rgba(52, 211, 153, 0.15) inset;
+
+  .ticket-badge {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(52, 211, 153, 0.25));
+    border: 1px solid rgba(52, 211, 153, 0.55);
+    color: #6ee7b7;
+    box-shadow: 0 0 18px rgba(52, 211, 153, 0.25);
+  }
+}
+
+/* —— Durum: Geçmiş (3) —— */
+.ticket-card.status-past {
+  border-color: rgba(148, 163, 184, 0.28);
+
+  .ticket-badge {
+    background: rgba(100, 116, 139, 0.25);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #cbd5e1;
+  }
+
+  .ticket-movie {
+    color: rgba(255, 255, 255, 0.88);
+  }
+}
+
+/* —— Durum: İptal (2) —— */
+.ticket-card.status-canceled {
+  opacity: 0.5;
+  border-color: rgba(248, 113, 113, 0.25);
+
+  .ticket-badge {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    color: #fca5a5;
+  }
+}
+
+.ticket-card.status-unknown .ticket-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(221, 225, 236, 0.6);
+}
+
+@media (max-width: 520px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,68 @@
+<section class="my-tickets-page">
+  <div class="my-tickets-page__inner">
+    <header class="page-head">
+      <a routerLink="/" class="back">← Ana Sayfaya Dön</a>
+      <h1 class="title">Biletlerim</h1>
+    </header>
+
+    <div class="loading" *ngIf="isLoading">Biletleriniz yükleniyor…</div>
+
+    <div class="alert" *ngIf="!isLoading && errorMessage">
+      {{ errorMessage }}
+      <a routerLink="/login" class="alert__link" [queryParams]="{ returnUrl: '/my-tickets' }"
+        >Giriş yap</a
+      >
+    </div>
+
+    <div class="empty" *ngIf="!isLoading && !errorMessage && !tickets.length">
+      <p class="empty__text">Henüz alınmış bir biletin bulunmuyor</p>
+      <a routerLink="/" class="empty__cta">Film Seçmeye Başla</a>
+    </div>
+
+    <div class="ticket-grid" *ngIf="!isLoading && !errorMessage && tickets.length">
+      <article
+        class="ticket-card"
+        *ngFor="let ticket of tickets; trackBy: trackTicket"
+        [ngClass]="getStatusClass(ticket.status)"
+      >
+        <div class="ticket-card__top">
+          <span class="ticket-badge">{{ getStatusText(ticket.status) }}</span>
+        </div>
+
+        <div class="ticket-card__body">
+          <h2 class="ticket-movie">{{ ticket.movieTitle || 'Film' }}</h2>
+          <p class="ticket-row">
+            <span class="ticket-label">Seans</span>
+            <span class="ticket-value">{{ formatShowtime(ticket.showtimeStart) }}</span>
+          </p>
+          <p class="ticket-row">
+            <span class="ticket-label">Koltuk</span>
+            <span class="ticket-value ticket-value--seat">{{ ticket.seatNumber }}</span>
+          </p>
+          <p class="ticket-row">
+            <span class="ticket-label">Tutar</span>
+            <span class="ticket-value">{{ formatPrice(ticket.price) }}</span>
+          </p>
+        </div>
+
+        <div class="ticket-actions" *ngIf="ticket.status === 1">
+          <button
+            type="button"
+            class="ticket-cancel"
+            [disabled]="cancelingId === ticket.id"
+            (click)="onCancelClick(ticket)"
+          >
+            {{ cancelingId === ticket.id ? 'İptal ediliyor…' : 'İptal Et' }}
+          </button>
+        </div>
+
+        <div class="ticket-tear" aria-hidden="true"></div>
+
+        <div class="ticket-barcode" aria-hidden="true">
+          <span class="ticket-barcode__text">{{ barcodePattern(ticket.id) }}</span>
+          <span class="ticket-barcode__id">#{{ ticket.id }}</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

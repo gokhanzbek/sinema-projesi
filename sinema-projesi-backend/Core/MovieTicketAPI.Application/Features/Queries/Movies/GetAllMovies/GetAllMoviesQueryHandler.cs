@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieTicketAPI.Application.Repositories.Movies.MovieTicketAPI.Domain.Repositories;
 using System;
@@ -20,7 +20,13 @@ namespace MovieTicketAPI.Application.Features.Queries.Movies.GetAllMovies
             return new GetAllMoviesQueryResponse
             {
                 TotalCount = await query.CountAsync(),
-                Movies = await query.Select(m => new { m.Id, m.Title, m.ImageUrl }).ToListAsync() // ImageUrl'i unutmadık! 😎
+                Movies = await query.Select(m => new
+                {
+                    m.Id,
+                    m.Title,
+                    m.ImageUrl,
+                    Categories = m.MovieCategories.Select(mc => mc.Category.Name).ToList()
+                }).ToListAsync()
             };
         }
     }
