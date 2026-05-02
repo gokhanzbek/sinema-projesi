@@ -15,6 +15,7 @@ namespace MovieTicketAPI.Infrastructure
             serviceCollection.AddHttpClient<IOmdbMovieRatingService, OmdbMovieRatingService>();
 
             serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            serviceCollection.AddScoped<IMailService, MailService>();
         }
     }
 }

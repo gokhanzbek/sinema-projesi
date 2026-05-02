@@ -22,25 +22,24 @@ namespace MovieTicketAPI.Application.Features.Queries.AppUser.GetCurrentUserProf
             GetCurrentUserProfileQueryRequest request,
             CancellationToken cancellationToken)
         {
-            if (!int.TryParse(_currentUser.UserId, out var userId))
+            // 1. ICurrentUser üzerinden sadece ID'yi alıyoruz
+            var userId = _currentUser.UserId;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                return new GetCurrentUserProfileQueryResponse
-                {
-                    Succeeded = false,
-                    Message = "Oturum bulunamadı. Lütfen tekrar giriş yapın."
-                };
+                return new() { Succeeded = false, Message = "Oturum bilgisi alınamadı." };
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            // 2. UserManager ile DB'deki en güncel kayda gidiyoruz
+            var user = await _userManager.FindByIdAsync(userId);
+            
+
             if (user == null)
             {
-                return new GetCurrentUserProfileQueryResponse
-                {
-                    Succeeded = false,
-                    Message = "Kullanıcı bulunamadı."
-                };
+                return new() { Succeeded = false, Message = "Kullanıcı veritabanında bulunamadı." };
             }
 
+            // 3. Güncel verileri response olarak dönüyoruz
             return new GetCurrentUserProfileQueryResponse
             {
                 Succeeded = true,

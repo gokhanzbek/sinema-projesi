@@ -40,6 +40,8 @@ namespace MovieTicketAPI.Persistence
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
             })
+
+
             .AddEntityFrameworkStores<MovieTicketDbContext>()
             .AddDefaultTokenProviders(); // 1. EKLEME: Varsayılan token sağlayıcıları eklendi
 

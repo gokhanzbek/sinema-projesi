@@ -67,6 +67,7 @@ namespace MovieTicketAPI.API.Controllers
         [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
         [RequestSizeLimit(MaxPosterBytes)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UploadPoster([FromForm] IFormFile file, CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0)

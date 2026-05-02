@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieTicketAPI.Application.Abstractions.Services;
 using MovieTicketAPI.Application.Features.Command.AppUser.ChangePassword;
 using MovieTicketAPI.Application.Features.Command.AppUser.CreateUser;
 using MovieTicketAPI.Application.Features.Command.AppUser.LoginUser;
@@ -13,10 +14,14 @@ namespace MovieTicketAPI.API.Controllers
     public class UsersController : ControllerBase
     {
         readonly IMediator _mediator;
-        public UsersController(IMediator mediator)
+        readonly IMailService _mailService;
+        
+        public UsersController(IMediator mediator, IMailService mailService)
         {
             _mediator = mediator;
+            _mailService = mailService;
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserCommandRequest createUserCommandRequest)
         {
@@ -49,6 +54,7 @@ namespace MovieTicketAPI.API.Controllers
                 return BadRequest(response);
             return Ok(response);
         }
+        
     }
 }
 

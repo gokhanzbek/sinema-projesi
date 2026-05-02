@@ -55,7 +55,7 @@ namespace MovieTicketAPI.Infrastructure.Services.Omdb
                 if (idTrimmed != null)
                 {
                     url =
-                        $"{baseUrl}/?apikey={Uri.EscapeDataString(key)}"
+                        $"{baseUrl}/?apikey={Uri.EscapeDataString(key)}"  //https://www.omdbapi.com/?apikey=1a2b3c4d&i=tt0111161 gibi görünür çalışınca
                         + $"&i={Uri.EscapeDataString(idTrimmed)}";
                 }
                 else
@@ -94,7 +94,7 @@ namespace MovieTicketAPI.Infrastructure.Services.Omdb
                 var s = imdbEl.GetString();
                 if (string.IsNullOrEmpty(s) || string.Equals(s, "N/A", StringComparison.OrdinalIgnoreCase))
                     return null;
-
+                
                 return decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)
                     ? d
                     : null;

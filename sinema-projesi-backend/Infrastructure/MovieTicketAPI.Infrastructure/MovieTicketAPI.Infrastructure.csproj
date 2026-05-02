@@ -7,6 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MailKit" Version="4.16.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
@@ -14,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MovieTicketAPI.Application\MovieTicketAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Core\MovieTicketAPI.Domain\MovieTicketAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>

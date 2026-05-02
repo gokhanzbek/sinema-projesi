@@ -9,13 +9,13 @@ namespace MovieTicketAPI.Application.Features.Command.AppUser.ChangePassword
     {
         private readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
         private readonly ICurrentUser _currentUser;
+        private readonly IMailService _mailService;
 
-        public ChangePasswordCommandHandler(
-            UserManager<Domain.Entities.Identity.AppUser> userManager,
-            ICurrentUser currentUser)
+        public ChangePasswordCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager, ICurrentUser currentUser, IMailService mailService)
         {
             _userManager = userManager;
             _currentUser = currentUser;
+            _mailService = mailService;
         }
 
         public async Task<ChangePasswordCommandResponse> Handle(
@@ -66,10 +66,12 @@ namespace MovieTicketAPI.Application.Features.Command.AppUser.ChangePassword
 
             if (result.Succeeded)
             {
+                _mailService.SendMailAsync(userId
                 return new ChangePasswordCommandResponse
                 {
                     Succeeded = true,
-                    Message = "Şifreniz güncellendi."
+                    Message = "Şifreniz güncellendi.",
+                    
                 };
             }
 
